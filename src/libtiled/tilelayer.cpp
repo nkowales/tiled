@@ -95,6 +95,9 @@ void TileLayer::recomputeDrawMargins()
         mMap->adjustDrawMargins(drawMargins());
 }
 
+/**
+ * Sets the cell at the given coordinates.
+ */
 void TileLayer::setCell(int x, int y, const Cell &cell)
 {
     Q_ASSERT(contains(x, y));
@@ -118,6 +121,14 @@ void TileLayer::setCell(int x, int y, const Cell &cell)
             mMap->adjustDrawMargins(drawMargins());
     }
 
+    mGrid[x + y * mWidth] = cell;
+}
+
+/**
+ * Used during loading.
+ */
+void TileLayer::setUnresolvedCell(int x, int y, const Cell &cell)
+{
     mGrid[x + y * mWidth] = cell;
 }
 

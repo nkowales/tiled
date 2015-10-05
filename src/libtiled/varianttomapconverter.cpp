@@ -391,11 +391,13 @@ TileLayer *VariantToMapConverter::toTileLayer(const QVariantMap &variantMap)
         case GidMapper::TileButNoTilesets:
             mError = tr("Tile used but no tilesets specified");
             return nullptr;
-        case GidMapper::InvalidTile:
-            mError = tr("Invalid tile: %1").arg(mGidMapper.invalidTile());
-            return nullptr;
         case GidMapper::NoError:
             break;
+        }
+
+        if (!mGidMapper.resolveCells(*tileLayer)) {
+            mError = tr("Invalid tile: %1").arg(mGidMapper.invalidTile());
+            return nullptr;
         }
 
         break;

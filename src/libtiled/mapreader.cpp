@@ -277,7 +277,43 @@ Map *MapReaderPrivate::readMap()
             }
         }
 
-        mMap->recomputeDrawMargins();
+        auto resolve = [this] (unsigned gid) -> Cell {
+            bool ok;
+            const Cell result = mGidMapper.gidToCell(gid, ok);
+
+            if (!ok)
+                mError = tr("Invalid tile: %1").arg(gid);
+
+            return result;
+        };
+
+        // Resolve the global tile IDs
+        for (Layer *layer : mMap->layers()) {
+            if (TileLayer *tileLayer = layer->asTileLayer()) {
+                for (Cell &cell : *tileLayer) {
+                    if (cell.gid != 0)
+                        cell = resolve(cell.gid);
+                }
+            } else if (ObjectGroup *objectGroup = layer->asObjectGroup()) {
+                for (MapObject *object : *objectGroup) {
+                    unsigned gid = object->cell().gid;
+                    object->setCell(resolve(gid));
+
+                    if (!object->cell().isEmpty()) {
+                        const QSizeF &tileSize = object->cell().tile->size();
+                        if (object->width() == 0)
+                            object->setWidth(tileSize.width());
+                        if (object->height() == 0)
+                            object->setHeight(tileSize.height());
+                    }
+                }
+            }
+        }
+
+        if (!mError.isEmpty())
+            mMap.reset();
+        else
+            mMap->recomputeDrawMargins();
     }
 
     return mMap.take();
@@ -607,7 +643,7 @@ void MapReaderPrivate::readLayerData(TileLayer &tileLayer)
 
                 const QXmlStreamAttributes atts = xml.attributes();
                 unsigned gid = atts.value(QLatin1String("gid")).toUInt();
-                tileLayer.setCell(x, y, cellForGid(gid));
+                tileLayer.setUnresolvedCell(x, y, cellForGid(gid));
 
                 x++;
                 if (x >= tileLayer.width()) {
@@ -644,9 +680,6 @@ void MapReaderPrivate::decodeBinaryLayerData(TileLayer &tileLayer,
     case GidMapper::TileButNoTilesets:
         xml.raiseError(tr("Tile used but no tilesets specified"));
         return;
-    case GidMapper::InvalidTile:
-        xml.raiseError(tr("Invalid tile: %1").arg(mGidMapper.invalidTile()));
-        return;
     case GidMapper::NoError:
         break;
     }
@@ -674,24 +707,17 @@ void MapReaderPrivate::decodeCSVLayerData(TileLayer &tileLayer, QStringRef text)
                                .arg(x + 1).arg(y + 1).arg(tileLayer.name()));
                 return;
             }
-            tileLayer.setCell(x, y, cellForGid(gid));
+            tileLayer.setUnresolvedCell(x, y, cellForGid(gid));
         }
     }
 }
 
 Cell MapReaderPrivate::cellForGid(unsigned gid)
 {
-    bool ok;
-    const Cell result = mGidMapper.gidToCell(gid, ok);
+    if (gid != 0 && mGidMapper.isEmpty())
+        xml.raiseError(tr("Tile used but no tilesets specified"));
 
-    if (!ok) {
-        if (mGidMapper.isEmpty())
-            xml.raiseError(tr("Tile used but no tilesets specified"));
-        else
-            xml.raiseError(tr("Invalid tile: %1").arg(gid));
-    }
-
-    return result;
+    return Cell(gid);
 }
 
 ObjectGroup *MapReaderPrivate::readObjectGroup()
@@ -810,17 +836,8 @@ MapObject *MapReaderPrivate::readObject()
     if (ok)
         object->setRotation(rotation);
 
-    if (gid) {
+    if (gid)
         object->setCell(cellForGid(gid));
-
-        if (!object->cell().isEmpty()) {
-            const QSizeF &tileSize = object->cell().tile->size();
-            if (width == 0)
-                object->setWidth(tileSize.width());
-            if (height == 0)
-                object->setHeight(tileSize.height());
-        }
-    }
 
     const int visible = visibleRef.toInt(&ok);
     if (ok)

@@ -60,13 +60,14 @@ public:
     enum DecodeError {
         NoError = 0,
         CorruptLayerData,
-        TileButNoTilesets,
-        InvalidTile
+        TileButNoTilesets
     };
 
     DecodeError decodeLayerData(TileLayer &tileLayer,
                                 const QByteArray &layerData,
                                 Map::LayerDataFormat format) const;
+
+    bool resolveCells(TileLayer &tileLayer) const;
 
     unsigned invalidTile() const;
 

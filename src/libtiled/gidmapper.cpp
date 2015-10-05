@@ -91,24 +91,23 @@ Cell GidMapper::gidToCell(unsigned gid, bool &ok) const
             ok = false;
         } else {
             --i; // Navigate one tileset back since upper bound finds the next
-            int tileId = gid - i.key();
+            int tileIndex = gid - i.key();
             Tileset *tileset = i.value();
 
-            // todo: re-enable the tile index adjustment somewhere else
-//            const int columnCount = mTilesetColumnCounts.value(tileset);
-//            if (columnCount > 0 && columnCount != tileset->columnCount()) {
-//                // Correct tile index for changes in image width
-//                const int row = tileIndex / columnCount;
-//                const int column = tileIndex % columnCount;
-//                tileIndex = row * tileset->columnCount() + column;
-//            }
+            const int columnCount = mTilesetColumnCounts.value(tileset);
+            if (columnCount > 0 && columnCount != tileset->columnCount()) {
+                // Correct tile index for changes in image width
+                const int row = tileIndex / columnCount;
+                const int column = tileIndex % columnCount;
+                tileIndex = row * tileset->columnCount() + column;
+            }
 
-            if (tileId >= tileset->tileCount())
-                tileset->expandTiles(tileId + 1);
-
-            result.tile = tileset->tileAt(tileId);
-
-            ok = true;
+            if (tileset->hasTile(tileIndex)) {
+                result.tile = tileset->tileAt(tileIndex);
+                ok = true;
+            } else {
+                ok = false;
+            }
         }
     }
 
@@ -209,7 +208,6 @@ GidMapper::DecodeError GidMapper::decodeLayerData(TileLayer &tileLayer,
     const unsigned char *data = reinterpret_cast<const unsigned char*>(decodedData.constData());
     int x = 0;
     int y = 0;
-    bool ok;
 
     for (int i = 0; i < size - 3; i += 4) {
         const unsigned gid = data[i] |
@@ -217,13 +215,12 @@ GidMapper::DecodeError GidMapper::decodeLayerData(TileLayer &tileLayer,
                              data[i + 2] << 16 |
                              data[i + 3] << 24;
 
-        const Cell result = gidToCell(gid, ok);
-        if (!ok) {
+        if (gid && isEmpty()) {
             mInvalidTile = gid;
-            return isEmpty() ? TileButNoTilesets : InvalidTile;
+            return TileButNoTilesets;
         }
 
-        tileLayer.setCell(x, y, result);
+        tileLayer.setUnresolvedCell(x, y, Cell(gid));
 
         x++;
         if (x == tileLayer.width()) {
@@ -233,4 +230,22 @@ GidMapper::DecodeError GidMapper::decodeLayerData(TileLayer &tileLayer,
     }
 
     return NoError;
+}
+
+bool GidMapper::resolveCells(TileLayer &tileLayer) const
+{
+    bool ok;
+
+    for (Cell &cell : tileLayer) {
+        unsigned gid = cell.gid;
+        if (gid != 0) {
+            cell = gidToCell(gid, ok);
+            if (!ok) {
+                mInvalidTile = gid;
+                return false;
+            }
+        }
+    }
+
+    return true;
 }

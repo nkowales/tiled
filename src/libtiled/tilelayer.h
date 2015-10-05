@@ -64,6 +64,10 @@ public:
         flippedAntiDiagonally(false)
     {}
 
+    explicit Cell(unsigned gid) :
+        gid(gid)
+    {}
+
     bool isEmpty() const { return tile == nullptr; }
 
     bool operator == (const Cell &other) const
@@ -82,10 +86,16 @@ public:
                 || flippedAntiDiagonally != other.flippedAntiDiagonally;
     }
 
-    Tile *tile;
-    bool flippedHorizontally;
-    bool flippedVertically;
-    bool flippedAntiDiagonally;
+    union {
+        struct {
+            Tile *tile;
+            bool flippedHorizontally;
+            bool flippedVertically;
+            bool flippedAntiDiagonally;
+        };
+
+        unsigned gid;
+    };
 };
 
 /**
@@ -153,10 +163,8 @@ public:
 
     const Cell &cellAt(const QPoint &point) const;
 
-    /**
-     * Sets the cell at the given coordinates.
-     */
     void setCell(int x, int y, const Cell &cell);
+    void setUnresolvedCell(int x, int y, const Cell &cell);
 
     /**
      * Returns a copy of the area specified by the given \a region. The
