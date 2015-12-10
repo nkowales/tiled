@@ -39,7 +39,6 @@ macx {
 }
 
 SOURCES += aboutdialog.cpp \
-    abstractimagetool.cpp \
     abstractobjecttool.cpp \
     abstracttiletool.cpp \
     abstracttool.cpp \
@@ -48,10 +47,12 @@ SOURCES += aboutdialog.cpp \
     addremoveterrain.cpp \
     addremovetiles.cpp \
     addremovetileset.cpp \
+    adjusttileindexes.cpp \
     automapper.cpp \
     automapperwrapper.cpp \
     automappingmanager.cpp \
     automappingutils.cpp  \
+    brokenlinks.cpp \
     brushitem.cpp \
     bucketfilltool.cpp \
     changeimagelayerposition.cpp \
@@ -64,6 +65,7 @@ SOURCES += aboutdialog.cpp \
     changepolygon.cpp \
     changeproperties.cpp \
     changetileanimation.cpp \
+    changetileimagesource.cpp \
     changetileobjectgroup.cpp \
     changetileprobability.cpp \
     changeselectedarea.cpp \
@@ -95,10 +97,10 @@ SOURCES += aboutdialog.cpp \
     flipmapobjects.cpp \
     geometry.cpp \
     imagelayeritem.cpp \
-    imagemovementtool.cpp \
     languagemanager.cpp \
     layerdock.cpp \
     layermodel.cpp \
+    layeroffsettool.cpp \
     main.cpp \
     mainwindow.cpp \
     mapdocumentactionhandler.cpp \
@@ -134,6 +136,7 @@ SOURCES += aboutdialog.cpp \
     raiselowerhelper.cpp \
     renamelayer.cpp \
     renameterrain.cpp \
+    replacetileset.cpp \
     resizedialog.cpp \
     resizehelper.cpp \
     resizemap.cpp \
@@ -161,6 +164,7 @@ SOURCES += aboutdialog.cpp \
     tilesetdock.cpp \
     tilesetmanager.cpp \
     tilesetmodel.cpp \
+    tilesetparametersedit.cpp \
     tilesetview.cpp \
     tilestamp.cpp \
     tilestampmanager.cpp \
@@ -176,7 +180,6 @@ SOURCES += aboutdialog.cpp \
     magicwandtool.cpp
 
 HEADERS += aboutdialog.h \
-    abstractimagetool.h \
     abstractobjecttool.h \
     abstracttiletool.h \
     abstracttool.h \
@@ -185,10 +188,12 @@ HEADERS += aboutdialog.h \
     addremoveterrain.h \
     addremovetiles.h \
     addremovetileset.h \
+    adjusttileindexes.h \
     automapper.h \
     automapperwrapper.h \
     automappingmanager.h \
     automappingutils.h \
+    brokenlinks.h \
     brushitem.h \
     bucketfilltool.h \
     changeimagelayerposition.h \
@@ -201,6 +206,7 @@ HEADERS += aboutdialog.h \
     changepolygon.h \
     changeproperties.h \
     changetileanimation.h \
+    changetileimagesource.h \
     changetileobjectgroup.h \
     changetileprobability.h \
     changeselectedarea.h \
@@ -233,10 +239,10 @@ HEADERS += aboutdialog.h \
     flipmapobjects.h \
     geometry.h \
     imagelayeritem.h \
-    imagemovementtool.h \
     languagemanager.h \
     layerdock.h \
     layermodel.h \
+    layeroffsettool.h \
     macsupport.h \
     mainwindow.h \
     mapdocumentactionhandler.h \
@@ -274,6 +280,7 @@ HEADERS += aboutdialog.h \
     rangeset.h \
     renamelayer.h \
     renameterrain.h \
+    replacetileset.h \
     resizedialog.h \
     resizehelper.h \
     resizemap.h \
@@ -301,6 +308,7 @@ HEADERS += aboutdialog.h \
     tilesetdock.h \
     tilesetmanager.h \
     tilesetmodel.h \
+    tilesetparametersedit.h \
     tilesetview.h \
     tilestamp.h \
     tilestampmanager.h \

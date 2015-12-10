@@ -28,8 +28,6 @@ QtGuiApplication {
         "aboutdialog.cpp",
         "aboutdialog.h",
         "aboutdialog.ui",
-        "abstractimagetool.cpp",
-        "abstractimagetool.h",
         "abstractobjecttool.cpp",
         "abstractobjecttool.h",
         "abstracttiletool.cpp",
@@ -46,6 +44,8 @@ QtGuiApplication {
         "addremovetileset.cpp",
         "addremovetileset.h",
         "addremovetiles.h",
+        "adjusttileindexes.cpp",
+        "adjusttileindexes.h",
         "automapper.cpp",
         "automapper.h",
         "automapperwrapper.cpp",
@@ -54,6 +54,8 @@ QtGuiApplication {
         "automappingmanager.h",
         "automappingutils.cpp",
         "automappingutils.h",
+        "brokenlinks.cpp",
+        "brokenlinks.h",
         "brushitem.cpp",
         "brushitem.h",
         "bucketfilltool.cpp",
@@ -80,6 +82,8 @@ QtGuiApplication {
         "changeselectedarea.h",
         "changetileanimation.cpp",
         "changetileanimation.h",
+        "changetileimagesource.cpp",
+        "changetileimagesource.h",
         "changetileobjectgroup.cpp",
         "changetileobjectgroup.h",
         "changetileprobability.cpp",
@@ -144,14 +148,14 @@ QtGuiApplication {
         "geometry.h",
         "imagelayeritem.cpp",
         "imagelayeritem.h",
-        "imagemovementtool.cpp",
-        "imagemovementtool.h",
         "languagemanager.cpp",
         "languagemanager.h",
         "layerdock.cpp",
         "layerdock.h",
         "layermodel.cpp",
         "layermodel.h",
+        "layeroffsettool.cpp",
+        "layeroffsettool.h",
         "magicwandtool.h",
         "magicwandtool.cpp",
         "main.cpp",
@@ -232,6 +236,8 @@ QtGuiApplication {
         "renamelayer.h",
         "renameterrain.cpp",
         "renameterrain.h",
+        "replacetileset.cpp",
+        "replacetileset.h",
         "resizedialog.cpp",
         "resizedialog.h",
         "resizedialog.ui",
@@ -290,6 +296,8 @@ QtGuiApplication {
         "tilesetmanager.h",
         "tilesetmodel.cpp",
         "tilesetmodel.h",
+        "tilesetparametersedit.cpp",
+        "tilesetparametersedit.h",
         "tilesetview.cpp",
         "tilesetview.h",
         "tilestamp.cpp",
@@ -346,6 +354,7 @@ QtGuiApplication {
     }
 
     Group {
+        name: "OS X (icons)"
         condition: qbs.targetOS.contains("osx")
         qbs.install: true
         qbs.installDir: "Tiled.app/Contents/Resources"
